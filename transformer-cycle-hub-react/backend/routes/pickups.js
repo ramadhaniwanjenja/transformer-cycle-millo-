@@ -2,13 +2,7 @@ const express = require('express');
 const { protect, authorize } = require('../middleware/auth');
 const Pickup = require('../models/Pickup');
 const User = require('../models/User');
-const Activity = require('../models/Activity');
-const { 
-  sendPickupRequestNotification, 
-  sendPickupApprovalNotification, 
-  sendPickupRejectionNotification,
-  sendPickupCompletionNotification 
-} = require('../utils/email');
+const { sendPickupRequestEmail, sendPickupApprovalEmail, sendPickupRejectionEmail } = require('../utils/email');
 
 const router = express.Router();
 
@@ -18,18 +12,16 @@ const router = express.Router();
 router.post('/', protect, async (req, res) => {
   try {
     const {
+      wasteType,
+      quantity,
       pickupDate,
       pickupTime,
       address,
-      wasteType,
-      estimatedWeight,
-      description,
-      specialInstructions,
-      isUrgent
+      notes
     } = req.body;
 
     // Validate required fields
-    if (!pickupDate || !pickupTime || !address || !wasteType || !estimatedWeight || !description) {
+    if (!wasteType || !quantity || !pickupDate || !pickupTime || !address) {
       return res.status(400).json({
         success: false,
         message: 'Please provide all required fields'
@@ -37,7 +29,7 @@ router.post('/', protect, async (req, res) => {
     }
 
     // Validate waste type
-    const validWasteTypes = ['electronics', 'batteries', 'plastics', 'paper', 'metal', 'glass', 'mixed'];
+    const validWasteTypes = ['plastic', 'paper', 'glass', 'metal', 'ewaste', 'mixed'];
     if (!validWasteTypes.includes(wasteType)) {
       return res.status(400).json({
         success: false,
@@ -45,39 +37,30 @@ router.post('/', protect, async (req, res) => {
       });
     }
 
-    // Validate estimated weight
-    if (estimatedWeight < 0.1) {
+    // Validate quantity
+    if (quantity < 0.1 || quantity > 100) {
       return res.status(400).json({
         success: false,
-        message: 'Estimated weight must be at least 0.1 kg'
+        message: 'Quantity must be between 0.1 and 100 kg'
       });
     }
 
     // Create pickup request
     const pickup = await Pickup.create({
       user: req.user.id,
+      wasteType,
+      quantity,
       pickupDate,
       pickupTime,
       address,
-      wasteType,
-      estimatedWeight,
-      description,
-      specialInstructions,
-      isUrgent: isUrgent || false
+      notes: notes || ''
     });
 
     // Populate user data for email
     await pickup.populate('user', 'firstName lastName email phone');
 
-    // Create activity record
-    await Activity.createPickupRequest(req.user.id, pickup._id, {
-      wasteType,
-      estimatedWeight,
-      pickupDate
-    });
-
-    // Send notification to admin
-    await sendPickupRequestNotification(pickup, pickup.user);
+    // Send confirmation email to user
+    await sendPickupRequestEmail(pickup.user, pickup);
 
     res.status(201).json({
       success: true,
@@ -174,11 +157,25 @@ router.get('/', protect, authorize('admin'), async (req, res) => {
       sort: { createdAt: -1 }
     };
 
-    const pickups = await Pickup.paginate(query, options);
+    const pickups = await Pickup.find(query)
+      .populate('user', 'firstName lastName email phone')
+      .sort({ createdAt: -1 })
+      .limit(parseInt(limit))
+      .skip((parseInt(page) - 1) * parseInt(limit));
+
+    const total = await Pickup.countDocuments(query);
 
     res.json({
       success: true,
-      data: pickups
+      data: {
+        pickups,
+        pagination: {
+          page: parseInt(page),
+          limit: parseInt(limit),
+          total,
+          pages: Math.ceil(total / parseInt(limit))
+        }
+      }
     });
 
   } catch (error) {
@@ -240,15 +237,8 @@ router.put('/:id/approve', protect, authorize('admin'), async (req, res) => {
     // Approve the pickup
     await pickup.approve(req.user.id, adminNotes);
 
-    // Create activity record
-    await Activity.createPickupApproval(pickup.user._id, pickup._id, {
-      wasteType: pickup.wasteType,
-      estimatedWeight: pickup.estimatedWeight,
-      pickupDate: pickup.pickupDate
-    });
-
     // Send approval notification to user
-    await sendPickupApprovalNotification(pickup, pickup.user);
+    await sendPickupApprovalEmail(pickup.user, pickup);
 
     res.json({
       success: true,
@@ -299,15 +289,8 @@ router.put('/:id/reject', protect, authorize('admin'), async (req, res) => {
     // Reject the pickup
     await pickup.reject(req.user.id, adminNotes);
 
-    // Create activity record
-    await Activity.createPickupRejection(pickup.user._id, pickup._id, {
-      wasteType: pickup.wasteType,
-      estimatedWeight: pickup.estimatedWeight,
-      pickupDate: pickup.pickupDate
-    }, adminNotes);
-
     // Send rejection notification to user
-    await sendPickupRejectionNotification(pickup, pickup.user, adminNotes);
+    await sendPickupRejectionEmail(pickup.user, pickup, adminNotes);
 
     res.json({
       success: true,
@@ -358,17 +341,11 @@ router.put('/:id/complete', protect, authorize('admin'), async (req, res) => {
     // Complete the pickup
     await pickup.complete(actualWeight);
 
-    // Calculate green points (1 point per kg)
-    const pointsEarned = Math.floor(actualWeight);
+    // Calculate green points (15 points per kg)
+    const pointsEarned = Math.floor(actualWeight * 15);
 
     // Update user's green points
     await pickup.user.addGreenPoints(pointsEarned);
-
-    // Create activity record
-    await Activity.createPickupCompletion(pickup.user._id, pickup._id, actualWeight, pointsEarned);
-
-    // Send completion notification to user
-    await sendPickupCompletionNotification(pickup, pickup.user, actualWeight, pointsEarned);
 
     res.json({
       success: true,

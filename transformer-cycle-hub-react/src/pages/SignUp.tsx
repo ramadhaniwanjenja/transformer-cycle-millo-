@@ -15,11 +15,12 @@ const SignUp: React.FC = () => {
     email: '',
     phone: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    role: 'user' // Add role field
   });
   const navigate = useNavigate();
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -46,7 +47,8 @@ const SignUp: React.FC = () => {
       lastName: formData.lastName,
       email: formData.email,
       phone: formData.phone,
-      password: formData.password
+      password: formData.password,
+      role: formData.role
     });
     
     try {
@@ -55,7 +57,8 @@ const SignUp: React.FC = () => {
         lastName: formData.lastName,
         email: formData.email,
         phone: formData.phone,
-        password: formData.password
+        password: formData.password,
+        role: formData.role
       });
 
       console.log('Registration response:', response.data);
@@ -215,6 +218,24 @@ const SignUp: React.FC = () => {
                   {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="role">Account Type</label>
+              <div className="input-group">
+                <FaUser />
+                <select
+                  id="role"
+                  name="role"
+                  value={formData.role}
+                  onChange={handleInputChange}
+                  disabled={isLoading}
+                >
+                  <option value="user">Regular User</option>
+                  <option value="admin">Admin User</option>
+                </select>
+              </div>
+              <small className="form-help">Choose 'Admin User' if you need administrative access</small>
             </div>
             
             <button 

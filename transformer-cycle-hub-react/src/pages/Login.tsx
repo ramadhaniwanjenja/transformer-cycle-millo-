@@ -52,11 +52,18 @@ const Login: React.FC = () => {
         localStorage.setItem('userData', JSON.stringify(response.data.data.user));
         localStorage.setItem('isAuthenticated', 'true');
         
+        // Check user role and redirect accordingly
+        const userRole = response.data.data.user.role;
+        
         // Show success message
         alert('Login successful! Welcome back!');
         
-        // Navigate to dashboard
-        navigate('/dashboard');
+        // Navigate based on user role
+        if (userRole === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/dashboard');
+        }
       }
     } catch (error: any) {
       console.error('Login error:', error);

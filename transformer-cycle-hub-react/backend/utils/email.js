@@ -350,6 +350,288 @@ const sendContactForm = async (contactData) => {
   }
 };
 
+// Send pickup request confirmation email
+const sendPickupRequestEmail = async (user, pickup) => {
+  try {
+    const transporter = createTransporter();
+    
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: user.email,
+      subject: 'Pickup Request Confirmation - Transformer Cycle Hub',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #4CAF50, #2E8B57); color: white; padding: 20px; text-align: center;">
+            <h1>🔄 Pickup Request Confirmed</h1>
+          </div>
+          
+          <div style="padding: 20px; background: #f9f9f9;">
+            <h2>Hello ${user.firstName} ${user.lastName},</h2>
+            
+            <p>Your waste pickup request has been successfully submitted and is now pending admin approval.</p>
+            
+            <div style="background: white; padding: 15px; border-radius: 8px; margin: 20px 0;">
+              <h3>📋 Request Details:</h3>
+              <ul>
+                <li><strong>Waste Type:</strong> ${pickup.wasteType}</li>
+                <li><strong>Quantity:</strong> ${pickup.quantity} kg</li>
+                <li><strong>Pickup Date:</strong> ${new Date(pickup.pickupDate).toLocaleDateString()}</li>
+                <li><strong>Pickup Time:</strong> ${pickup.pickupTime}</li>
+                <li><strong>Address:</strong> ${pickup.address}</li>
+                ${pickup.notes ? `<li><strong>Notes:</strong> ${pickup.notes}</li>` : ''}
+              </ul>
+            </div>
+            
+            <p>Our admin team will review your request and you'll receive an email notification once it's approved or rejected.</p>
+            
+            <p>You can track your pickup status in your dashboard.</p>
+            
+            <div style="text-align: center; margin: 20px 0;">
+              <a href="${process.env.FRONTEND_URL}/dashboard" style="background: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">View Dashboard</a>
+            </div>
+            
+            <p>Thank you for contributing to a sustainable future!</p>
+            
+            <p>Best regards,<br>Transformer Cycle Hub Team</p>
+          </div>
+        </div>
+      `
+    };
+    
+    await transporter.sendMail(mailOptions);
+    console.log('Pickup request confirmation email sent to:', user.email);
+    
+  } catch (error) {
+    console.error('Error sending pickup request email:', error);
+  }
+};
+
+// Send pickup approval email
+const sendPickupApprovalEmail = async (user, pickup) => {
+  try {
+    const transporter = createTransporter();
+    
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: user.email,
+      subject: 'Pickup Request Approved - Transformer Cycle Hub',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #4CAF50, #2E8B57); color: white; padding: 20px; text-align: center;">
+            <h1>✅ Pickup Request Approved</h1>
+          </div>
+          
+          <div style="padding: 20px; background: #f9f9f9;">
+            <h2>Hello ${user.firstName} ${user.lastName},</h2>
+            
+            <p>Great news! Your waste pickup request has been approved by our admin team.</p>
+            
+            <div style="background: white; padding: 15px; border-radius: 8px; margin: 20px 0;">
+              <h3>📋 Pickup Details:</h3>
+              <ul>
+                <li><strong>Waste Type:</strong> ${pickup.wasteType}</li>
+                <li><strong>Quantity:</strong> ${pickup.quantity} kg</li>
+                <li><strong>Pickup Date:</strong> ${new Date(pickup.pickupDate).toLocaleDateString()}</li>
+                <li><strong>Pickup Time:</strong> ${pickup.pickupTime}</li>
+                <li><strong>Address:</strong> ${pickup.address}</li>
+                ${pickup.adminNotes ? `<li><strong>Admin Notes:</strong> ${pickup.adminNotes}</li>` : ''}
+              </ul>
+            </div>
+            
+            <p>Our collection team will arrive at your specified address on the scheduled date and time.</p>
+            
+            <p><strong>Please ensure your waste is properly sorted and ready for collection.</strong></p>
+            
+            <div style="text-align: center; margin: 20px 0;">
+              <a href="${process.env.FRONTEND_URL}/dashboard" style="background: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">View Dashboard</a>
+            </div>
+            
+            <p>Thank you for your contribution to environmental sustainability!</p>
+            
+            <p>Best regards,<br>Transformer Cycle Hub Team</p>
+          </div>
+        </div>
+      `
+    };
+    
+    await transporter.sendMail(mailOptions);
+    console.log('Pickup approval email sent to:', user.email);
+    
+  } catch (error) {
+    console.error('Error sending pickup approval email:', error);
+  }
+};
+
+// Send pickup rejection email
+const sendPickupRejectionEmail = async (user, pickup, adminNotes) => {
+  try {
+    const transporter = createTransporter();
+    
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: user.email,
+      subject: 'Pickup Request Update - Transformer Cycle Hub',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #f44336, #d32f2f); color: white; padding: 20px; text-align: center;">
+            <h1>❌ Pickup Request Update</h1>
+          </div>
+          
+          <div style="padding: 20px; background: #f9f9f9;">
+            <h2>Hello ${user.firstName} ${user.lastName},</h2>
+            
+            <p>We regret to inform you that your waste pickup request has been rejected by our admin team.</p>
+            
+            <div style="background: white; padding: 15px; border-radius: 8px; margin: 20px 0;">
+              <h3>📋 Request Details:</h3>
+              <ul>
+                <li><strong>Waste Type:</strong> ${pickup.wasteType}</li>
+                <li><strong>Quantity:</strong> ${pickup.quantity} kg</li>
+                <li><strong>Pickup Date:</strong> ${new Date(pickup.pickupDate).toLocaleDateString()}</li>
+                <li><strong>Pickup Time:</strong> ${pickup.pickupTime}</li>
+                <li><strong>Address:</strong> ${pickup.address}</li>
+                <li><strong>Admin Notes:</strong> ${adminNotes}</li>
+              </ul>
+            </div>
+            
+            <p>Please review the admin notes above and feel free to submit a new request with the necessary corrections.</p>
+            
+            <div style="text-align: center; margin: 20px 0;">
+              <a href="${process.env.FRONTEND_URL}/pickup" style="background: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Submit New Request</a>
+            </div>
+            
+            <p>If you have any questions, please don't hesitate to contact our support team.</p>
+            
+            <p>Best regards,<br>Transformer Cycle Hub Team</p>
+          </div>
+        </div>
+      `
+    };
+    
+    await transporter.sendMail(mailOptions);
+    console.log('Pickup rejection email sent to:', user.email);
+    
+  } catch (error) {
+    console.error('Error sending pickup rejection email:', error);
+  }
+};
+
+// Send tutorial completion email
+const sendTutorialCompletionEmail = async (userEmail, userName, tutorialTitle) => {
+  try {
+    const transporter = createTransporter(); // Re-use createTransporter for consistency
+    const mailOptions = {
+      from: process.env.EMAIL_FROM,
+      to: userEmail,
+      subject: `🎉 Tutorial Completed: ${tutorialTitle}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8f9fa;">
+          <div style="background: linear-gradient(135deg, #4CAF50, #2E8B57); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+            <h1 style="margin: 0; font-size: 28px;">🎓 Tutorial Completed!</h1>
+            <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Congratulations on completing your upcycling tutorial!</p>
+          </div>
+          
+          <div style="background: white; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <h2 style="color: #333; margin-bottom: 20px;">Hello ${userName}!</h2>
+            
+            <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+              You have successfully completed the tutorial: <strong style="color: #4CAF50;">${tutorialTitle}</strong>
+            </p>
+            
+            <div style="background: #e8f5e8; border-left: 4px solid #4CAF50; padding: 20px; margin: 20px 0; border-radius: 5px;">
+              <h3 style="color: #2E8B57; margin: 0 0 10px 0;">🏆 Rewards Earned</h3>
+              <ul style="color: #666; margin: 0; padding-left: 20px;">
+                <li><strong>+10 Points</strong> added to your account</li>
+                <li>New upcycling skill learned</li>
+                <li>Contribution to environmental sustainability</li>
+              </ul>
+            </div>
+            
+            <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+              Keep learning and earning points by completing more tutorials. Your efforts help create a more sustainable future!
+            </p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/tutorials" 
+                 style="background: linear-gradient(135deg, #4CAF50, #2E8B57); color: white; padding: 12px 30px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold;">
+                Explore More Tutorials
+              </a>
+            </div>
+            
+            <div style="border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px; text-align: center; color: #999; font-size: 14px;">
+              <p>Thank you for being part of our recycling community!</p>
+              <p>Transformer Cycle Hub Team</p>
+            </div>
+          </div>
+        </div>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`Tutorial completion email sent to ${userEmail}`);
+  } catch (error) {
+    console.error('Error sending tutorial completion email:', error);
+  }
+};
+
+// Send reward redemption email
+const sendRewardRedemptionEmail = async (userEmail, userName, rewardName, pointsSpent) => {
+  try {
+    const transporter = createTransporter(); // Re-use createTransporter for consistency
+    const mailOptions = {
+      from: process.env.EMAIL_FROM,
+      to: userEmail,
+      subject: `🎁 Reward Redeemed: ${rewardName}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8f9fa;">
+          <div style="background: linear-gradient(135deg, #FF6B35, #ff8c42); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+            <h1 style="margin: 0; font-size: 28px;">🎁 Reward Redeemed!</h1>
+            <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Congratulations on redeeming your reward!</p>
+          </div>
+          
+          <div style="background: white; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <h2 style="color: #333; margin-bottom: 20px;">Hello ${userName}!</h2>
+            
+            <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+              You have successfully redeemed: <strong style="color: #FF6B35;">${rewardName}</strong>
+            </p>
+            
+            <div style="background: #fff3e0; border-left: 4px solid #FF6B35; padding: 20px; margin: 20px 0; border-radius: 5px;">
+              <h3 style="color: #e65100; margin: 0 0 10px 0;">🏆 Redemption Details</h3>
+              <ul style="color: #666; margin: 0; padding-left: 20px;">
+                <li><strong>Reward:</strong> ${rewardName}</li>
+                <li><strong>Points Spent:</strong> ${pointsSpent} points</li>
+                <li><strong>Status:</strong> Pending approval</li>
+              </ul>
+            </div>
+            
+            <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+              Our team will review your redemption and contact you soon with delivery details. Thank you for your contribution to environmental sustainability!
+            </p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/rewards" 
+                 style="background: linear-gradient(135deg, #FF6B35, #ff8c42); color: white; padding: 12px 30px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold;">
+                View My Rewards
+              </a>
+            </div>
+            
+            <div style="border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px; text-align: center; color: #999; font-size: 14px;">
+              <p>Thank you for being part of our recycling community!</p>
+              <p>Transformer Cycle Hub Team</p>
+            </div>
+          </div>
+        </div>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`Reward redemption email sent to ${userEmail}`);
+  } catch (error) {
+    console.error('Error sending reward redemption email:', error);
+  }
+};
+
 module.exports = {
   sendContactForm,
   sendAdminNotification,
@@ -357,5 +639,10 @@ module.exports = {
   sendPickupRequestNotification,
   sendPickupApprovalNotification,
   sendPickupRejectionNotification,
-  sendPickupCompletionNotification
+  sendPickupCompletionNotification,
+  sendPickupRequestEmail,
+  sendPickupApprovalEmail,
+  sendPickupRejectionEmail,
+  sendTutorialCompletionEmail,
+  sendRewardRedemptionEmail
 }; 

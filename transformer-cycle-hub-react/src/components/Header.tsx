@@ -6,13 +6,25 @@ import './Header.css';
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userRole, setUserRole] = useState<string>('');
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check authentication status
+    // Check authentication status and user role
     const authStatus = localStorage.getItem('isAuthenticated') === 'true';
+    const userData = localStorage.getItem('userData');
+    
     setIsAuthenticated(authStatus);
+    
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        setUserRole(user.role || 'user');
+      } catch (error) {
+        setUserRole('user');
+      }
+    }
   }, []);
 
   const toggleMenu = () => {
@@ -29,7 +41,11 @@ const Header: React.FC = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('userData');
     setIsAuthenticated(false);
+    setUserRole('');
     navigate('/');
   };
 
@@ -106,6 +122,22 @@ const Header: React.FC = () => {
                   >
                     Dashboard
                   </Link>
+                </li>
+                {userRole === 'admin' && (
+                  <li>
+                    <Link 
+                      to="/admin" 
+                      className={`admin-link ${isActive('/admin') ? 'active' : ''}`} 
+                      onClick={closeMenu}
+                    >
+                      Admin
+                    </Link>
+                  </li>
+                )}
+                <li>
+                  <span className="user-role">
+                    {userRole === 'admin' ? '👑 Admin' : '👤 User'}
+                  </span>
                 </li>
                 <li>
                   <button 

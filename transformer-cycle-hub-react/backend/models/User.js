@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
-  greenPoints: {
+  points: {
     type: Number,
     default: 0
   },
@@ -130,9 +130,9 @@ userSchema.methods.updateLastLogin = function() {
   return this.save();
 };
 
-// Instance method to add green points
-userSchema.methods.addGreenPoints = function(points) {
-  this.greenPoints += points;
+// Instance method to add points
+userSchema.methods.addPoints = function(points) {
+  this.points += points;
   return this.save();
 };
 

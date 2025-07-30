@@ -74,7 +74,8 @@ router.post('/register', [
       lastName,
       email: email.toLowerCase(),
       phone,
-      password
+      password,
+      role: req.body.role || 'user' // Allow role to be set during registration
     });
 
     // Don't generate tokens - user needs to login first

@@ -1,83 +1,165 @@
 .tutorials-page {
-  min-height: 100vh;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
-.tutorials-hero {
+.tutorials-header {
   text-align: center;
-  padding: 4rem 2rem;
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
-  color: white;
-  border-radius: 20px;
   margin-bottom: 3rem;
-  position: relative;
-  overflow: hidden;
 }
 
-.tutorials-hero::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-  opacity: 0.3;
-}
-
-.tutorials-hero .hero-content {
-  position: relative;
-  z-index: 1;
-}
-
-.tutorials-hero h1 {
-  font-size: 3rem;
+.tutorials-header h1 {
+  font-size: 2.5rem;
+  color: #333;
   margin-bottom: 1rem;
-  color: white;
+  background: linear-gradient(135deg, #4CAF50, #2E8B57);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.tutorials-hero p {
-  font-size: 1.2rem;
-  opacity: 0.9;
+.tutorials-header p {
+  font-size: 1.1rem;
+  color: #666;
   max-width: 600px;
   margin: 0 auto;
 }
 
+/* Search and Filter Section */
+.tutorials-filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  align-items: center;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.search-box {
+  position: relative;
+  flex: 1;
+  min-width: 250px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 12px 20px 12px 45px;
+  border: 2px solid #e0e0e0;
+  border-radius: 25px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+.search-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+
+.filter-controls {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-group select {
+  padding: 10px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 20px;
+  background: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter-group select:focus {
+  outline: none;
+  border-color: #4CAF50;
+}
+
+.filter-icon {
+  color: #666;
+}
+
+/* Tutorials Grid */
 .tutorials-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 2rem;
-  margin: 3rem 0;
+  margin-bottom: 3rem;
 }
 
 .tutorial-card {
   background: white;
   border-radius: 15px;
-  box-shadow: var(--shadow);
   overflow: hidden;
-  transition: var(--transition);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
   position: relative;
 }
 
 .tutorial-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
-.tutorial-image {
+.tutorial-card.completed {
+  border: 2px solid #4CAF50;
+}
+
+.tutorial-thumbnail {
   position: relative;
   height: 200px;
+  background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
 }
 
-.tutorial-image img {
+.tutorial-thumbnail img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
 }
 
-.tutorial-card:hover .tutorial-image img {
-  transform: scale(1.05);
+.thumbnail-placeholder {
+  font-size: 3rem;
+  color: #ccc;
+}
+
+.completion-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #4CAF50;
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
 }
 
 .tutorial-overlay {
@@ -86,7 +168,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -98,80 +180,317 @@
   opacity: 1;
 }
 
-.play-icon {
-  color: white;
-  font-size: 3rem;
-  background: rgba(255, 255, 255, 0.2);
+.play-button {
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
-  padding: 1rem;
-  -webkit-backdrop-filter: blur(5px);
-  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #4CAF50;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.tutorial-content {
+.play-button:hover {
+  background: white;
+  transform: scale(1.1);
+}
+
+.tutorial-info {
   padding: 1.5rem;
 }
 
-.tutorial-content h3 {
-  color: var(--primary-dark);
-  margin-bottom: 1rem;
-  font-size: 1.3rem;
-}
-
-.tutorial-content p {
-  color: var(--gray);
-  margin-bottom: 1.5rem;
-  line-height: 1.6;
+.tutorial-header h3 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+  font-size: 1.2rem;
 }
 
 .tutorial-meta {
   display: flex;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   flex-wrap: wrap;
 }
 
 .tutorial-meta span {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.9rem;
-  color: var(--gray);
-  background: #f8f9fa;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: #666;
 }
 
-.tutorial-meta .duration {
-  color: var(--info);
-}
-
-.tutorial-meta .difficulty {
-  color: var(--warning);
-}
-
-.tutorial-meta .points {
-  color: var(--success);
+.difficulty {
   font-weight: 600;
 }
 
-.view-tutorial {
+.tutorial-description {
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.progress-bar {
+  position: relative;
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(135deg, #4CAF50, #2E8B57);
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  position: absolute;
+  right: 0;
+  top: -20px;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.tutorial-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.watch-btn {
+  background: linear-gradient(135deg, #4CAF50, #2E8B57);
+  color: white;
+  flex: 1;
+}
+
+.watch-btn:hover {
+  background: linear-gradient(135deg, #45a049, #1a5632);
+}
+
+.materials-btn {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.materials-btn:hover {
+  background: #e0e0e0;
+}
+
+/* Video Modal */
+.video-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 15px;
+  max-width: 900px;
   width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.video-container {
+  padding: 1.5rem;
+}
+
+.video-container video {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.tutorial-details {
+  padding: 1.5rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.materials-section,
+.steps-section {
+  margin-bottom: 2rem;
+}
+
+.materials-section h3,
+.steps-section h3 {
+  color: #333;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.materials-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.materials-section li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.materials-section li.optional {
+  color: #999;
+}
+
+.optional-tag {
+  background: #f0f0f0;
+  color: #666;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+}
+
+.step {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+.step h4 {
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.step p {
+  color: #666;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Auth Prompt */
+.auth-prompt {
   text-align: center;
-  margin-top: 1rem;
+  padding: 3rem;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 2rem;
+}
+
+.auth-prompt h3 {
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.auth-buttons .btn {
+  padding: 12px 24px;
+  font-size: 1rem;
+}
+
+/* Loading State */
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+  font-size: 1.1rem;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .tutorials-hero h1 {
-    font-size: 2rem;
+  .tutorials-page {
+    padding: 1rem;
+  }
+  
+  .tutorials-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .search-box {
+    min-width: auto;
+  }
+  
+  .filter-controls {
+    justify-content: center;
   }
   
   .tutorials-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
   
-  .tutorial-meta {
-    justify-content: center;
+  .video-modal {
+    padding: 1rem;
+  }
+  
+  .modal-content {
+    max-height: 95vh;
+  }
+  
+  .auth-buttons {
+    flex-direction: column;
   }
 }

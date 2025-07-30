@@ -1,56 +1,38 @@
 const mongoose = require('mongoose');
-const mongoosePaginate = require('mongoose-paginate-v2');
 
 const pickupSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: [true, 'User is required']
-  },
-  pickupDate: {
-    type: Date,
-    required: [true, 'Pickup date is required']
-  },
-  pickupTime: {
-    type: String,
-    required: [true, 'Pickup time is required']
-  },
-  address: {
-    street: {
-      type: String,
-      required: [true, 'Street address is required']
-    },
-    city: {
-      type: String,
-      required: [true, 'City is required']
-    },
-    state: {
-      type: String,
-      required: [true, 'State is required']
-    },
-    zipCode: {
-      type: String,
-      required: [true, 'ZIP code is required']
-    },
-    country: {
-      type: String,
-      default: 'USA'
-    }
+    required: true
   },
   wasteType: {
     type: String,
-    required: [true, 'Waste type is required'],
-    enum: ['electronics', 'batteries', 'plastics', 'paper', 'metal', 'glass', 'mixed']
+    required: true,
+    enum: ['plastic', 'paper', 'glass', 'metal', 'ewaste', 'mixed']
   },
-  estimatedWeight: {
+  quantity: {
     type: Number,
-    required: [true, 'Estimated weight is required'],
-    min: [0.1, 'Weight must be at least 0.1 kg']
+    required: true,
+    min: 0.1,
+    max: 100
   },
-  description: {
+  pickupDate: {
+    type: Date,
+    required: true
+  },
+  pickupTime: {
     type: String,
-    required: [true, 'Description is required'],
-    maxlength: [500, 'Description cannot exceed 500 characters']
+    required: true,
+    enum: ['morning', 'afternoon', 'evening']
+  },
+  address: {
+    type: String,
+    required: true
+  },
+  notes: {
+    type: String,
+    default: ''
   },
   status: {
     type: String,
@@ -59,109 +41,42 @@ const pickupSchema = new mongoose.Schema({
   },
   adminNotes: {
     type: String,
-    maxlength: [1000, 'Admin notes cannot exceed 1000 characters']
+    default: ''
   },
-  actualWeight: {
-    type: Number,
-    min: [0, 'Actual weight cannot be negative']
-  },
-  greenPointsEarned: {
-    type: Number,
-    default: 0
-  },
-  adminApprovedBy: {
+  approvedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
-  adminApprovedAt: {
+  approvedAt: {
     type: Date
   },
   completedAt: {
     type: Date
   },
-  isUrgent: {
-    type: Boolean,
-    default: false
+  actualWeight: {
+    type: Number,
+    min: 0
   },
-  specialInstructions: {
-    type: String,
-    maxlength: [300, 'Special instructions cannot exceed 300 characters']
+  pointsEarned: {
+    type: Number,
+    default: 0
   }
 }, {
-  timestamps: true,
-  toJSON: { virtuals: true },
-  toObject: { virtuals: true }
+  timestamps: true
 });
 
-// Virtual for full address
-pickupSchema.virtual('fullAddress').get(function() {
-  return `${this.address.street}, ${this.address.city}, ${this.address.state} ${this.address.zipCode}, ${this.address.country}`;
-});
-
-// Virtual for status display
-pickupSchema.virtual('statusDisplay').get(function() {
-  const statusMap = {
-    pending: 'Pending Approval',
-    approved: 'Approved',
-    rejected: 'Rejected',
-    completed: 'Completed'
-  };
-  return statusMap[this.status] || this.status;
-});
-
-// Index for better query performance
-pickupSchema.index({ user: 1, status: 1 });
-pickupSchema.index({ status: 1, createdAt: -1 });
-pickupSchema.index({ pickupDate: 1 });
-
-// Pre-save middleware to calculate green points
-pickupSchema.pre('save', function(next) {
-  if (this.isModified('actualWeight') && this.actualWeight > 0) {
-    // Calculate green points based on weight (1 point per kg)
-    this.greenPointsEarned = Math.floor(this.actualWeight);
-  }
-  next();
-});
-
-// Instance method to approve pickup
-pickupSchema.methods.approve = function(adminId, notes = '') {
-  this.status = 'approved';
-  this.adminApprovedBy = adminId;
-  this.adminApprovedAt = new Date();
-  this.adminNotes = notes;
-  return this.save();
-};
-
-// Instance method to reject pickup
-pickupSchema.methods.reject = function(adminId, notes = '') {
-  this.status = 'rejected';
-  this.adminApprovedBy = adminId;
-  this.adminApprovedAt = new Date();
-  this.adminNotes = notes;
-  return this.save();
-};
-
-// Instance method to complete pickup
-pickupSchema.methods.complete = function(actualWeight) {
-  this.status = 'completed';
-  this.actualWeight = actualWeight;
-  this.completedAt = new Date();
-  return this.save();
-};
-
-// Static method to find pending pickups
-pickupSchema.statics.findPending = function() {
-  return this.find({ status: 'pending' }).populate('user', 'firstName lastName email phone');
-};
-
-// Static method to find pickups by user
+// Static method to get user's pickups
 pickupSchema.statics.findByUser = function(userId) {
-  return this.find({ user: userId }).sort({ createdAt: -1 });
+  return this.find({ user: userId })
+    .populate('user', 'firstName lastName email phone')
+    .sort({ createdAt: -1 });
 };
 
-// Static method to find approved pickups
-pickupSchema.statics.findApproved = function() {
-  return this.find({ status: 'approved' }).populate('user', 'firstName lastName email phone');
+// Static method to get pending pickups
+pickupSchema.statics.findPending = function() {
+  return this.find({ status: 'pending' })
+    .populate('user', 'firstName lastName email phone')
+    .sort({ createdAt: -1 });
 };
 
 // Static method to get pickup statistics
@@ -171,21 +86,48 @@ pickupSchema.statics.getStats = async function() {
       $group: {
         _id: '$status',
         count: { $sum: 1 },
-        totalWeight: { $sum: '$actualWeight' }
+        totalWeight: { $sum: '$quantity' }
       }
     }
   ]);
   
-  return stats.reduce((acc, stat) => {
-    acc[stat._id] = {
-      count: stat.count,
-      totalWeight: stat.totalWeight || 0
-    };
-    return acc;
-  }, {});
+  const totalPickups = await this.countDocuments();
+  const totalWeight = await this.aggregate([
+    { $group: { _id: null, total: { $sum: '$quantity' } } }
+  ]);
+
+  return {
+    byStatus: stats,
+    totalPickups,
+    totalWeight: totalWeight[0]?.total || 0
+  };
 };
 
-// Add pagination plugin
-pickupSchema.plugin(mongoosePaginate);
+// Instance method to approve pickup
+pickupSchema.methods.approve = async function(adminId, notes = '') {
+  this.status = 'approved';
+  this.adminNotes = notes;
+  this.approvedBy = adminId;
+  this.approvedAt = new Date();
+  return await this.save();
+};
+
+// Instance method to reject pickup
+pickupSchema.methods.reject = async function(adminId, notes = '') {
+  this.status = 'rejected';
+  this.adminNotes = notes;
+  this.approvedBy = adminId;
+  this.approvedAt = new Date();
+  return await this.save();
+};
+
+// Instance method to complete pickup
+pickupSchema.methods.complete = async function(actualWeight) {
+  this.status = 'completed';
+  this.actualWeight = actualWeight;
+  this.completedAt = new Date();
+  this.pointsEarned = Math.floor(actualWeight * 15); // 15 points per kg
+  return await this.save();
+};
 
 module.exports = mongoose.model('Pickup', pickupSchema); 
