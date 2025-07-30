@@ -5,6 +5,7 @@
   position: sticky;
   top: 0;
   z-index: 1000;
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -95,6 +96,7 @@
   color: #4CAF50;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
 }
 
@@ -221,4 +223,4 @@
 .nav.active ul li:nth-child(5) { animation-delay: 0.5s; }
 .nav.active ul li:nth-child(6) { animation-delay: 0.6s; }
 .nav.active ul li:nth-child(7) { animation-delay: 0.7s; }
-.nav.active ul li:nth-child(8) { animation-delay: 0.8s; } 
+.nav.active ul li:nth-child(8) { animation-delay: 0.8s; }

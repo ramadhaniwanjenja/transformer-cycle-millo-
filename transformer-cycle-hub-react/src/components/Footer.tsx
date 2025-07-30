@@ -26,7 +26,7 @@ const Footer: React.FC = () => {
           <div className="footer-section">
             <h4>Contact Info</h4>
             <p>Email: info@transformercyclehub.com</p>
-            <p>Phone: +254 700 000 000</p>
+            <p>Phone: +254 716677792</p>
             <p>Address: Nairobi, Kenya</p>
           </div>
           

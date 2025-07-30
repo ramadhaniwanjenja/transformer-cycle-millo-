@@ -62,6 +62,27 @@ const admin = (req, res, next) => {
   }
 };
 
+// Middleware to authorize specific roles
+const authorize = (...roles) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Not authorized, no token'
+      });
+    }
+
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: `Access denied. ${roles.join(' or ')} privileges required.`
+      });
+    }
+
+    next();
+  };
+};
+
 // Middleware to check if user is active
 const activeUser = (req, res, next) => {
   if (req.user && req.user.isActive) {
@@ -99,6 +120,7 @@ const optionalAuth = async (req, res, next) => {
 module.exports = {
   protect,
   admin,
+  authorize,
   activeUser,
   optionalAuth
 }; 
