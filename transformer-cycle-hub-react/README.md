@@ -1,130 +1,237 @@
-# Grade Generator Calculator
+# Transformer Cycle Hub - React Frontend
 
-Welcome to the **Grade Generator Calculator** --- a simple Python-based application designed to help students, teachers, or anyone track academic performance more easily and clearly. This application allows you to enter your assignments, categorize them as either **Formative** or **Summative**, and get detailed results including **GPA** and **Pass/Fail** status.
+A modern React-based frontend for the Transformer Cycle Hub waste management and recycling platform.
 
-## What This Application Does
+## 🚀 Features
 
-This tool helps you:
+### Modern React Architecture
+- **TypeScript** - Type-safe development
+- **React Router** - Client-side routing
+- **React Icons** - Beautiful icon library
+- **Responsive Design** - Mobile-first approach
+- **Component-Based** - Reusable and maintainable components
 
-- Enter and track multiple assignments with names, weights, and grades.
-- Categorize assignments into **Formative** (e.g., quizzes, classwork) or **Summative** (e.g., exams, projects).
-- Automatically calculate:
-  - Weighted scores per category
-  - Category averages
-  - Final GPA (on a 5.0 scale)
-  - Final result: **PASS** or **FAIL & REPEAT**
+### Key Components
+- **Header** - Navigation with mobile menu
+- **Footer** - Social links and company info
+- **CommunityMap** - Interactive recycling centers map
+- **Home** - Landing page with hero and features
+- **About** - Company information and mission
+- **Pickup** - Waste pickup scheduling (to be implemented)
+- **Tutorials** - Educational content (to be implemented)
+- **Rewards** - Points and rewards system (to be implemented)
+- **Contact** - Contact form (to be implemented)
+- **Login** - Authentication (to be implemented)
+- **Dashboard** - User dashboard (to be implemented)
+- **AdminDashboard** - Admin panel (to be implemented)
 
-## Project Structure
+## 📁 Project Structure
 
 ```
-grade_generator/
-│
-├── main.py                # Starts the program and displays results
-├── assignment.py          # Defines how each assignment is stored and formatted
-└── grade_calculator.py    # Handles input, validation, calculations, and result logic
+transformer-cycle-hub-react/
+├── public/
+│   ├── index.html
+│   └── manifest.json
+├── src/
+│   ├── components/
+│   │   ├── Header.tsx
+│   │   ├── Header.css
+│   │   ├── Footer.tsx
+│   │   ├── Footer.css
+│   │   ├── CommunityMap.tsx
+│   │   └── CommunityMap.css
+│   ├── pages/
+│   │   ├── Home.tsx
+│   │   ├── Home.css
+│   │   ├── About.tsx
+│   │   ├── About.css
+│   │   ├── Pickup.tsx
+│   │   ├── Tutorials.tsx
+│   │   ├── Rewards.tsx
+│   │   ├── Contact.tsx
+│   │   ├── Login.tsx
+│   │   ├── Dashboard.tsx
+│   │   └── AdminDashboard.tsx
+│   ├── services/
+│   │   ├── api.ts
+│   │   ├── auth.ts
+│   │   └── socket.ts
+│   ├── types/
+│   │   ├── user.ts
+│   │   ├── pickup.ts
+│   │   └── common.ts
+│   ├── App.tsx
+│   ├── App.css
+│   ├── index.tsx
+│   └── index.css
+├── package.json
+├── tsconfig.json
+└── README.md
 ```
 
-## How to Run the Application
+## 🎨 Design System
 
-### 1. Requirements
+### Color Palette
+- **Primary**: #2E8B57 (Sea Green)
+- **Primary Dark**: #1a5632
+- **Primary Light**: #4CAF50
+- **Secondary**: #FF6B35 (Orange)
+- **Accent**: #6A4C93 (Purple)
+- **Light**: #f8f9fa
+- **Dark**: #343a40
 
-- Make sure Python is installed on your computer (version 3.6 or higher).
-- Download the project files.
-- Open your terminal or command prompt.
+### Typography
+- **Font Family**: Inter, Segoe UI, Tahoma, Geneva, Verdana, sans-serif
+- **Weights**: 300, 400, 500, 600, 700
 
-### 2. Run the Program
+### Components
+- **Cards**: White background with rounded corners and shadow
+- **Buttons**: Gradient backgrounds with hover effects
+- **Forms**: Clean input fields with focus states
+- **Navigation**: Sticky header with mobile menu
 
+## 🛠️ Development
+
+### Prerequisites
+- Node.js (v14 or higher)
+- npm or yarn
+
+### Installation
 ```bash
-python main.py
+# Install dependencies
+npm install
+
+# Start development server
+npm start
+
+# Build for production
+npm run build
+
+# Run tests
+npm test
 ```
 
-Upon running the main.py file, follow a series of on-screen prompts to enter your assignment details one by one.
+### Available Scripts
+- `npm start` - Start development server
+- `npm run build` - Build for production
+- `npm test` - Run tests
+- `npm run eject` - Eject from Create React App
 
-## What You'll Be Asked
+## 🔧 Configuration
 
-You'll be guided through these steps:
+### Environment Variables
+Create a `.env` file in the root directory:
 
-1. **Enter the name** of your assignment (e.g., "Quiz 1" or "Final Exam").
-2. **Select a category**:
-   - Formative (e.g., quizzes, classwork)
-   - Summative (e.g., major exams, final project)
-3. **Enter the weight** of the assignment (e.g., 20%).
-   - The total weight for each category must not go beyond 100%.
-4. **Enter the grade** you received (between 0 and 100).
-
-You can keep adding multiple assignments, and when you're done, you will be prompted if you want to add another assignment, kindly select "n" for "no".
-
-## Interaction Example
-
-```
-WELCOME TO THE GRADE GENERATOR CALCULATOR
-
-Enter assignment name: Final Exam
-
-Select category:
-1. Formative
-2. Summative
-
-Enter choice (1/2): 2
-
-Remaining weight in Summative: 100%
-
-Enter assignment weight (as %): 60
-
-Enter the grade obtained (0-100%): 70
-
-Would you like to add another assignment? (y/n): y
-...
+```env
+REACT_APP_API_URL=http://localhost:3005
+REACT_APP_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+REACT_APP_SOCKET_URL=http://localhost:3005
 ```
 
-At the end, you'll get a detailed breakdown of your grades, category averages, and your GPA.
+### Backend Integration
+The React app is configured to proxy requests to the backend server running on port 3005. Update the proxy setting in `package.json` if needed.
 
-## How Final Results Are Calculated
+## 📱 Responsive Design
 
-### GPA (Out of 5.0)
+The application is fully responsive with breakpoints:
+- **Mobile**: < 576px
+- **Tablet**: 576px - 768px
+- **Desktop**: > 768px
 
-Your total weighted score is scaled to a GPA on a 5-point scale.
+## 🎯 Key Features Implemented
 
-### Category Averages
+### ✅ Completed
+- [x] Project structure and configuration
+- [x] Header with navigation
+- [x] Footer with social links
+- [x] Home page with hero section
+- [x] About page with company info
+- [x] CommunityMap component
+- [x] Responsive design
+- [x] TypeScript configuration
+- [x] CSS styling system
 
-Each category's average is calculated based on the total weight and grades for that category.
+### 🚧 In Progress
+- [ ] Pickup scheduling page
+- [ ] Tutorials page
+- [ ] Rewards system
+- [ ] Contact form
+- [ ] Authentication
+- [ ] User dashboard
+- [ ] Admin dashboard
+- [ ] API integration
+- [ ] Socket.IO integration
 
-### Pass/Fail Criteria
+## 🔗 Backend Integration
 
-To **pass** the course:
+The React frontend is designed to work with the existing Node.js backend:
 
-- **Formative Average ≥ 50%**
-- **Summative Average ≥ 50%**
+### API Endpoints
+- Authentication: `/api/login`, `/api/register`
+- Pickups: `/api/pickups`
+- Contact: `/api/contact`
+- Admin: `/api/admin/*`
 
-If either one is below 50%, the result is: **FAIL & REPEAT**
+### Socket.IO Events
+- Real-time notifications
+- Live updates
+- Chat functionality
 
-## Output Example
+## 🎨 UI/UX Features
 
+### Modern Design
+- Clean and minimalist interface
+- Smooth animations and transitions
+- Consistent color scheme
+- Professional typography
+
+### User Experience
+- Intuitive navigation
+- Mobile-friendly design
+- Fast loading times
+- Accessible components
+
+### Interactive Elements
+- Hover effects on cards and buttons
+- Loading states
+- Error handling
+- Success messages
+
+## 🚀 Deployment
+
+### Build for Production
+```bash
+npm run build
 ```
-GRADE CALCULATION RESULTS
 
-ASSIGNMENT SUMMARY:
-1. Quiz 1 | Formative | Weight: 20% | Grade: 80% | Weighted: 16.00
-2. Final Exam | Summative | Weight: 50% | Grade: 70% | Weighted: 35.00
+### Deploy Options
+- **Netlify**: Drag and drop the `build` folder
+- **Vercel**: Connect GitHub repository
+- **AWS S3**: Upload build files
+- **Heroku**: Use buildpack
 
-CATEGORY TOTALS:
-Formative Total Weighted Score: 16.00%
-Summative Total Weighted Score: 35.00%
+## 🤝 Contributing
 
-Formative Average: 80.00%
-Summative Average: 70.00%
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
-GPA: 2.55 / 5.00
+## 📄 License
 
-FINAL REPORT: PASS
+This project is licensed under the MIT License.
 
-Bravo! You have successfully passed the course!
-```
+## 🆘 Support
 
-## Files Explained
+For technical support:
+- Check the browser console for errors
+- Ensure the backend server is running
+- Verify API endpoints are accessible
+- Review the documentation
 
-| File | Description |
-|------|-------------|
-| main.py | Runs the entire program and handles the user interface. |
-| assignment.py | Stores assignment info and handles individual weighted grade calculation. |
-| grade_calculator.py | Core logic: input collection, validation, calculations, result display. |
+---
+
+**Version**: 1.0.0  
+**Last Updated**: January 2025  
+**Framework**: React 18 with TypeScript 
