@@ -128,6 +128,51 @@ app.get('/api/test-tutorials', async (req, res) => {
   }
 });
 
+// Test email configuration and send test email
+app.get('/api/test-email-send', async (req, res) => {
+  try {
+    const { sendTutorialCompletionEmail } = require('./utils/email');
+    
+    console.log('Testing email sending...');
+    console.log('Email config:', {
+      service: process.env.EMAIL_SERVICE,
+      user: process.env.EMAIL_USER,
+      hasPass: !!process.env.EMAIL_PASS,
+      from: process.env.EMAIL_FROM,
+      adminEmail: process.env.ADMIN_EMAIL
+    });
+    
+    // Try to send a test email
+    const emailSent = await sendTutorialCompletionEmail(
+      'l.carew@alustudent.com',
+      'Test User',
+      'Test Tutorial'
+    );
+    
+    res.json({
+      success: true,
+      message: 'Email test completed',
+      data: {
+        emailSent,
+        config: {
+          service: process.env.EMAIL_SERVICE,
+          user: process.env.EMAIL_USER,
+          hasPass: !!process.env.EMAIL_PASS,
+          from: process.env.EMAIL_FROM,
+          adminEmail: process.env.ADMIN_EMAIL
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error testing email:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error testing email',
+      error: error.message
+    });
+  }
+});
+
 // Simple login test route (without database)
 app.post('/api/auth/login-test', (req, res) => {
   res.json({ 
