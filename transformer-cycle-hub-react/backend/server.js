@@ -3,7 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
-require('dotenv').config({ path: './config.env' });
+require('dotenv').config();
 
 // Import database connection
 const connectDB = require('./utils/database');
@@ -43,7 +43,23 @@ app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'OK', 
     message: 'Transformer Cycle Hub API is running',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    env: {
+      nodeEnv: process.env.NODE_ENV,
+      corsOrigin: process.env.CORS_ORIGIN,
+      hasMongoUri: !!process.env.MONGODB_URI,
+      hasJwtSecret: !!process.env.JWT_SECRET
+    }
+  });
+});
+
+// Test auth route
+app.post('/api/auth/test', (req, res) => {
+  res.json({ 
+    success: true, 
+    message: 'Auth test route working',
+    method: req.method,
+    url: req.url
   });
 });
 
