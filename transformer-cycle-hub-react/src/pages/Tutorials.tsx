@@ -115,14 +115,22 @@ const Tutorials: React.FC = () => {
     }
   };
 
-  const handleVideoComplete = () => {
+  const handleVideoComplete = async () => {
     if (selectedTutorial) {
-      updateProgress(selectedTutorial._id, 100, true);
-      setShowVideoModal(false);
-      alert('🎉 Tutorial completed! You earned 10 points!');
-      
-      // Dispatch event to notify dashboard
-      window.dispatchEvent(new CustomEvent('tutorialCompleted'));
+      try {
+        await updateProgress(selectedTutorial._id, 100, true);
+        setShowVideoModal(false);
+        alert('🎉 Tutorial completed! You earned 10 points!');
+        
+        // Dispatch event to notify dashboard
+        window.dispatchEvent(new CustomEvent('tutorialCompleted'));
+        
+        // Refresh user progress
+        await fetchUserProgress();
+      } catch (error) {
+        console.error('Error completing tutorial:', error);
+        alert('❌ Failed to complete tutorial. Please try again.');
+      }
     }
   };
 

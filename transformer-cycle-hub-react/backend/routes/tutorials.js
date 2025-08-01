@@ -167,24 +167,51 @@ router.put('/:id/progress', protect, async (req, res) => {
     
     // Update progress
     if (progress !== undefined) {
-      await userTutorial.updateProgress(progress);
+      try {
+        await userTutorial.updateProgress(progress);
+      } catch (error) {
+        console.error('Error updating progress:', error);
+        // Fallback: update directly
+        userTutorial.watchProgress = Math.min(progress, 100);
+        userTutorial.lastWatchedAt = new Date();
+        await userTutorial.save();
+      }
     }
     
     // Mark as completed if requested
     if (completed && !userTutorial.isCompleted) {
-      const wasCompleted = await userTutorial.completeTutorial();
-      
-      if (wasCompleted) {
+      try {
+        const wasCompleted = await userTutorial.completeTutorial();
+        
+        if (wasCompleted) {
+          // Update user points
+          await User.findByIdAndUpdate(userId, {
+            $inc: { points: 10 }
+          });
+          
+          // Send completion email
+          const tutorial = await Tutorial.findById(tutorialId);
+          if (tutorial) {
+            try {
+              await sendTutorialCompletionEmail(req.user.email, req.user.firstName, tutorial.title);
+            } catch (emailError) {
+              console.error('Email sending failed:', emailError);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error completing tutorial:', error);
+        // Fallback: complete manually
+        userTutorial.isCompleted = true;
+        userTutorial.completedAt = new Date();
+        userTutorial.pointsEarned = 10;
+        userTutorial.watchProgress = 100;
+        await userTutorial.save();
+        
         // Update user points
         await User.findByIdAndUpdate(userId, {
           $inc: { points: 10 }
         });
-        
-        // Send completion email
-        const tutorial = await Tutorial.findById(tutorialId);
-        if (tutorial) {
-          await sendTutorialCompletionEmail(req.user.email, req.user.firstName, tutorial.title);
-        }
       }
     }
     
