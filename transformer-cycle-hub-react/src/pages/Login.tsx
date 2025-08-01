@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FaUser, FaLock, FaEye, FaEyeSlash, FaLeaf } from 'react-icons/fa';
 import { authAPI } from '../services/api';
+import { setAuthData } from '../utils/auth';
 import './Auth.css';
 
 const Login: React.FC = () => {
@@ -46,17 +47,13 @@ const Login: React.FC = () => {
       });
 
       if (response.data.success) {
-        // Store tokens and user data
-        localStorage.setItem('accessToken', response.data.data.accessToken);
-        localStorage.setItem('refreshToken', response.data.data.refreshToken);
-        localStorage.setItem('userData', JSON.stringify(response.data.data.user));
-        localStorage.setItem('isAuthenticated', 'true');
+        // Store tokens and user data using utility function
+        setAuthData(response.data.data);
         
         // Check user role and redirect accordingly
         const userRole = response.data.data.user.role;
         
-        // Show success message
-        alert('Login successful! Welcome back!');
+        console.log('Login successful:', { userRole, user: response.data.data.user });
         
         // Navigate based on user role
         if (userRole === 'admin') {
