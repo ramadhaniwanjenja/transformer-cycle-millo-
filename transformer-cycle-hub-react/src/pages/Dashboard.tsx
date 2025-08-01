@@ -97,23 +97,18 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  // Function to refresh all data (called after earning points)
-  const refreshDashboard = () => {
-    fetchUserPickups();
-    fetchUserPoints();
-  };
-
   // Listen for tutorial completion events
   useEffect(() => {
     const handleTutorialComplete = () => {
-      refreshDashboard();
+      fetchUserPickups();
+      fetchUserPoints();
     };
 
     window.addEventListener('tutorialCompleted', handleTutorialComplete);
     return () => {
       window.removeEventListener('tutorialCompleted', handleTutorialComplete);
     };
-  }, [refreshDashboard]);
+  }, []);
 
   const getStatusIcon = (status: string) => {
     switch (status) {

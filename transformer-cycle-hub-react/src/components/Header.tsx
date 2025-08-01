@@ -31,19 +31,25 @@ const Header: React.FC = () => {
     // Check on mount
     checkAuth();
 
-    // Listen for storage changes
-    const handleStorageChange = () => {
-      checkAuth();
+    // Listen for storage changes (only when localStorage changes in other tabs)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'isAuthenticated' || e.key === 'userData') {
+        checkAuth();
+      }
     };
 
     window.addEventListener('storage', handleStorageChange);
     
-    // Also check periodically
-    const interval = setInterval(checkAuth, 1000);
+    // Check when window gains focus (user returns to tab)
+    const handleFocus = () => {
+      checkAuth();
+    };
+
+    window.addEventListener('focus', handleFocus);
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
-      clearInterval(interval);
+      window.removeEventListener('focus', handleFocus);
     };
   }, []);
 
