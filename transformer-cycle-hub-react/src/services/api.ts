@@ -72,6 +72,8 @@ export const recyclingCentersAPI = {
 
 export const tutorialsAPI = {
   getAll: () => api.get('/tutorials'),
+  getProgress: () => api.get('/tutorials/progress'),
+  updateProgress: (id: string, data: any) => api.put(`/tutorials/${id}/progress`, data),
   create: (data: any) => api.post('/tutorials', data),
   update: (id: string, data: any) => api.put(`/tutorials/${id}`, data),
   delete: (id: string) => api.delete(`/tutorials/${id}`),
@@ -79,6 +81,8 @@ export const tutorialsAPI = {
 
 export const rewardsAPI = {
   getAll: () => api.get('/rewards'),
+  getMyRewards: () => api.get('/rewards/my-rewards'),
+  redeemReward: (rewardId: string, data: any) => api.post(`/rewards/${rewardId}/redeem`, data),
   create: (data: any) => api.post('/rewards', data),
   update: (id: string, data: any) => api.put(`/rewards/${id}`, data),
   delete: (id: string) => api.delete(`/rewards/${id}`),

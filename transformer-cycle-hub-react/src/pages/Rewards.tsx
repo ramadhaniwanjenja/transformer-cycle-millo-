@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+
 import { FaGift, FaStar, FaTimes, FaFilter, FaSearch } from 'react-icons/fa';
+import { rewardsAPI } from '../services/api';
 import './Rewards.css';
 
 interface Reward {
@@ -54,7 +55,7 @@ const Rewards: React.FC = () => {
 
   const fetchRewards = async () => {
     try {
-      const response = await axios.get('/api/rewards');
+      const response = await rewardsAPI.getAll();
       if (response.data.success) {
         setRewards(response.data.data);
       }
@@ -75,11 +76,7 @@ const Rewards: React.FC = () => {
 
       console.log('Fetching user rewards with token:', token.substring(0, 20) + '...');
 
-      const response = await axios.get('/api/rewards/my-rewards', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await rewardsAPI.getAll();
 
       console.log('Rewards response:', response.data);
 
@@ -100,13 +97,7 @@ const Rewards: React.FC = () => {
       const token = localStorage.getItem('accessToken');
       if (!token) return;
 
-      const response = await axios.post(`/api/rewards/${selectedReward._id}/redeem`, {
-        deliveryDetails
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await rewardsAPI.redeemReward(selectedReward._id, deliveryDetails);
 
       if (response.data.success) {
         alert('🎉 Reward redeemed successfully! Check your email for confirmation.');

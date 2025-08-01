@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { tutorialsAPI } from '../services/api';
 import { FaPlay, FaClock, FaStar, FaCheck, FaSearch, FaFilter, FaGraduationCap, FaRecycle, FaGlasses, FaPaperPlane, FaTshirt } from 'react-icons/fa';
 import './Tutorials.css';
 
@@ -67,12 +67,7 @@ const Tutorials: React.FC = () => {
 
   const fetchTutorials = async () => {
     try {
-      const params = new URLSearchParams();
-      if (selectedCategory) params.append('category', selectedCategory);
-      if (selectedDifficulty) params.append('difficulty', selectedDifficulty);
-      if (searchTerm) params.append('search', searchTerm);
-
-      const response = await axios.get(`/api/tutorials?${params.toString()}`);
+      const response = await tutorialsAPI.getAll();
       if (response.data.success) {
         setTutorials(response.data.data);
       }
@@ -85,15 +80,7 @@ const Tutorials: React.FC = () => {
 
   const fetchUserProgress = async () => {
     try {
-      const token = localStorage.getItem('accessToken');
-      if (!token) return;
-
-      const response = await axios.get('/api/tutorials/progress', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
+      const response = await tutorialsAPI.getProgress();
       if (response.data.success) {
         setUserTutorials(response.data.data);
       }
@@ -104,16 +91,9 @@ const Tutorials: React.FC = () => {
 
   const updateProgress = async (tutorialId: string, progress: number, completed: boolean = false) => {
     try {
-      const token = localStorage.getItem('accessToken');
-      if (!token) return;
-
-      await axios.put(`/api/tutorials/${tutorialId}/progress`, {
+      await tutorialsAPI.updateProgress(tutorialId, {
         progress,
         completed
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
       });
 
       // Refresh user progress
