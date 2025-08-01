@@ -30,7 +30,9 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    // Only logout on 401 if it's an authentication error, not other API errors
+    if (error.response?.status === 401 && error.response?.data?.message?.includes('token')) {
+      console.log('Authentication token expired, logging out...');
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('userData');

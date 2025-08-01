@@ -27,6 +27,13 @@ const Dashboard: React.FC = () => {
   });
 
   useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      console.log('No authentication token found, skipping dashboard data fetch');
+      setLoading(false);
+      return;
+    }
+
     fetchUserData();
     fetchUserPickups();
     fetchUserPoints();
@@ -47,7 +54,10 @@ const Dashboard: React.FC = () => {
   const fetchUserPickups = async () => {
     try {
       const token = localStorage.getItem('accessToken');
-      if (!token) return;
+      if (!token) {
+        console.log('No access token found for pickups');
+        return;
+      }
 
       const response = await pickupsAPI.getMyPickups();
 
@@ -64,9 +74,13 @@ const Dashboard: React.FC = () => {
           totalPoints,
           totalWeight
         });
+      } else {
+        console.log('Pickups response not successful:', response.data);
       }
-    } catch (error) {
-      console.error('Error fetching pickups:', error);
+    } catch (error: any) {
+      console.error('Error fetching pickups:', error.response?.data || error.message);
+      // Don't crash the page, just show empty data
+      setPickups([]);
     } finally {
       setLoading(false);
     }
@@ -76,7 +90,7 @@ const Dashboard: React.FC = () => {
     try {
       const token = localStorage.getItem('accessToken');
       if (!token) {
-        console.log('No access token found');
+        console.log('No access token found for points');
         return;
       }
 
@@ -91,9 +105,12 @@ const Dashboard: React.FC = () => {
           ...prevStats,
           totalPoints: response.data.data.pointsBalance
         }));
+      } else {
+        console.log('Points response not successful:', response.data);
       }
     } catch (error: any) {
       console.error('Error fetching user points:', error.response?.data || error.message);
+      // Don't crash the page, just keep current points
     }
   };
 
