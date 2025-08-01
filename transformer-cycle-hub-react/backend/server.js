@@ -65,6 +65,21 @@ app.post('/api/auth/test', (req, res) => {
   });
 });
 
+// Test email configuration
+app.get('/api/test-email', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Email configuration test',
+    config: {
+      hasEmailService: !!process.env.EMAIL_SERVICE,
+      hasEmailUser: !!process.env.EMAIL_USER,
+      hasEmailPass: !!process.env.EMAIL_PASS,
+      hasEmailFrom: !!process.env.EMAIL_FROM,
+      hasAdminEmail: !!process.env.ADMIN_EMAIL
+    }
+  });
+});
+
 // Simple login test route (without database)
 app.post('/api/auth/login-test', (req, res) => {
   res.json({ 

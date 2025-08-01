@@ -76,7 +76,7 @@ const Rewards: React.FC = () => {
 
       console.log('Fetching user rewards with token:', token.substring(0, 20) + '...');
 
-      const response = await rewardsAPI.getAll();
+      const response = await rewardsAPI.getMyRewards();
 
       console.log('Rewards response:', response.data);
 

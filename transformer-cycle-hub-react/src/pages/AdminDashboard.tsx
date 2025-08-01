@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaUsers, FaRecycle, FaChartBar, FaCog, FaCheck, FaTimes } from 'react-icons/fa';
-import axios from 'axios';
+import { pickupsAPI, usersAPI } from '../services/api';
 import './AdminDashboard.css';
 
 interface Pickup {
@@ -45,14 +45,7 @@ const AdminDashboard: React.FC = () => {
       if (!token) return;
 
       // Fetch all pickups, not just pending ones
-      const response = await axios.get('/api/pickups', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        params: {
-          limit: 50 // Get more pickups
-        }
-      });
+      const response = await pickupsAPI.getAll();
 
       if (response.data.success) {
         setPickups(response.data.data.pickups || response.data.data);
@@ -70,18 +63,10 @@ const AdminDashboard: React.FC = () => {
       if (!token) return;
 
       // Fetch pickup stats
-      const pickupResponse = await axios.get('/api/pickups/stats', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const pickupResponse = await pickupsAPI.getStats();
 
       // Fetch user stats
-      const userResponse = await axios.get('/api/users/stats', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const userResponse = await usersAPI.getStats();
 
       if (pickupResponse.data.success && userResponse.data.success) {
         const pickupStats = pickupResponse.data.data;
@@ -102,14 +87,7 @@ const AdminDashboard: React.FC = () => {
   const handleApprove = async (pickupId: string) => {
     setActionLoading(pickupId);
     try {
-      const token = localStorage.getItem('accessToken');
-      const response = await axios.put(`/api/pickups/${pickupId}/approve`, {
-        adminNotes
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await pickupsAPI.approve(pickupId, { adminNotes });
 
       if (response.data.success) {
         alert('Pickup approved successfully!');
@@ -133,14 +111,7 @@ const AdminDashboard: React.FC = () => {
 
     setActionLoading(pickupId);
     try {
-      const token = localStorage.getItem('accessToken');
-      const response = await axios.put(`/api/pickups/${pickupId}/reject`, {
-        adminNotes
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await pickupsAPI.reject(pickupId, { adminNotes });
 
       if (response.data.success) {
         alert('Pickup rejected successfully!');

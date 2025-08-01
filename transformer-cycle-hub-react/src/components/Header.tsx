@@ -12,19 +12,39 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     // Check authentication status and user role
-    const authStatus = localStorage.getItem('isAuthenticated') === 'true';
-    const userData = localStorage.getItem('userData');
-    
-    setIsAuthenticated(authStatus);
-    
-    if (userData) {
-      try {
-        const user = JSON.parse(userData);
-        setUserRole(user.role || 'user');
-      } catch (error) {
-        setUserRole('user');
+    const checkAuth = () => {
+      const authStatus = localStorage.getItem('isAuthenticated') === 'true';
+      const userData = localStorage.getItem('userData');
+      
+      setIsAuthenticated(authStatus);
+      
+      if (userData) {
+        try {
+          const user = JSON.parse(userData);
+          setUserRole(user.role || 'user');
+        } catch (error) {
+          setUserRole('user');
+        }
       }
-    }
+    };
+
+    // Check on mount
+    checkAuth();
+
+    // Listen for storage changes
+    const handleStorageChange = () => {
+      checkAuth();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Also check periodically
+    const interval = setInterval(checkAuth, 1000);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
   }, []);
 
   const toggleMenu = () => {
