@@ -80,6 +80,54 @@ app.get('/api/test-email', (req, res) => {
   });
 });
 
+// Test database and tutorials
+app.get('/api/test-tutorials', async (req, res) => {
+  try {
+    const mongoose = require('mongoose');
+    const Tutorial = require('./models/Tutorial');
+    
+    console.log('Testing tutorials endpoint...');
+    
+    // Check database connection
+    if (mongoose.connection.readyState !== 1) {
+      console.log('Database not connected, attempting to connect...');
+      try {
+        await mongoose.connect(process.env.MONGODB_URI, {
+          useNewUrlParser: true,
+          useUnifiedTopology: true,
+        });
+      } catch (dbError) {
+        console.error('Database connection failed:', dbError);
+        return res.status(500).json({
+          success: false,
+          message: 'Database connection failed',
+          error: dbError.message
+        });
+      }
+    }
+    
+    // Count tutorials
+    const tutorialCount = await Tutorial.countDocuments();
+    console.log(`Found ${tutorialCount} tutorials`);
+    
+    res.json({
+      success: true,
+      message: 'Tutorials test successful',
+      data: {
+        tutorialCount,
+        dbConnected: mongoose.connection.readyState === 1
+      }
+    });
+  } catch (error) {
+    console.error('Error testing tutorials:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error testing tutorials',
+      error: error.message
+    });
+  }
+});
+
 // Simple login test route (without database)
 app.post('/api/auth/login-test', (req, res) => {
   res.json({ 
