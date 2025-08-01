@@ -46,7 +46,7 @@ const Tutorials: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedDifficulty, setSelectedDifficulty] = useState('');
   const [showVideoModal, setShowVideoModal] = useState(false);
-  const [videoProgress, setVideoProgress] = useState(0);
+  const [videoProgress] = useState(0);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
@@ -127,7 +127,6 @@ const Tutorials: React.FC = () => {
     if (selectedTutorial) {
       updateProgress(selectedTutorial._id, 100, true);
       setShowVideoModal(false);
-      setVideoProgress(0);
       alert('🎉 Tutorial completed! You earned 10 points!');
       
       // Dispatch event to notify dashboard
@@ -136,7 +135,6 @@ const Tutorials: React.FC = () => {
   };
 
   const handleVideoProgress = (progress: number) => {
-    setVideoProgress(progress);
     if (selectedTutorial && progress > 90) { // Mark as complete at 90%
       handleVideoComplete();
     }

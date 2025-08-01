@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaRecycle, FaCalendar, FaMapMarkerAlt, FaPhone } from 'react-icons/fa';
+import { FaRecycle, FaCalendar, FaMapMarkerAlt } from 'react-icons/fa';
 import axios from 'axios';
 import './Pickup.css';
 

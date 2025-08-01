@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaGift, FaStar, FaCheck, FaClock, FaTruck, FaTimes, FaFilter, FaSearch } from 'react-icons/fa';
+import { FaGift, FaStar, FaTimes, FaFilter, FaSearch } from 'react-icons/fa';
 import './Rewards.css';
 
 interface Reward {

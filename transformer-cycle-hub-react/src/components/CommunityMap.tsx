@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaMapMarkerAlt, FaPhone, FaGlobe, FaClock, FaStar, FaFilter, FaSearch } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaPhone, FaGlobe, FaStar, FaFilter, FaSearch } from 'react-icons/fa';
 import './CommunityMap.css';
 
 interface RecyclingCenter {
@@ -39,7 +39,7 @@ const CommunityMap: React.FC = () => {
   useEffect(() => {
     fetchCenters();
     getUserLocation();
-  }, []);
+  }, [filterType, filterService, userLocation]);
 
   const fetchCenters = async () => {
     try {

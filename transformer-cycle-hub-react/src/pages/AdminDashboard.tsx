@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaUsers, FaRecycle, FaChartBar, FaCog, FaCheck, FaTimes, FaEye } from 'react-icons/fa';
+import { FaUsers, FaRecycle, FaChartBar, FaCog, FaCheck, FaTimes } from 'react-icons/fa';
 import axios from 'axios';
 import './AdminDashboard.css';
 

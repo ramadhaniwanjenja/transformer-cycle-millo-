@@ -121,7 +121,7 @@ const Dashboard: React.FC = () => {
     return () => {
       window.removeEventListener('tutorialCompleted', handleTutorialComplete);
     };
-  }, []);
+  }, [refreshDashboard]);
 
   const getStatusIcon = (status: string) => {
     switch (status) {
