@@ -35,7 +35,7 @@ const createAdmin = async () => {
       password: 'admin123',
       role: 'admin',
       isActive: true,
-      greenPoints: 0
+      points: 0
     });
 
     console.log('✅ Admin user created successfully!');

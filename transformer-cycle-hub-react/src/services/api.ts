@@ -58,6 +58,7 @@ export const usersAPI = {
 
 export const pickupsAPI = {
   getAll: () => api.get('/pickups'),
+  getMyPickups: () => api.get('/pickups/my-pickups'),
   create: (data: any) => api.post('/pickups', data),
   update: (id: string, data: any) => api.put(`/pickups/${id}`, data),
   delete: (id: string) => api.delete(`/pickups/${id}`),

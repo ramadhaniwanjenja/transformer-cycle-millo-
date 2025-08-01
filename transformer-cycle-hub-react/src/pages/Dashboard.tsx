@@ -49,7 +49,7 @@ const Dashboard: React.FC = () => {
       const token = localStorage.getItem('accessToken');
       if (!token) return;
 
-      const response = await pickupsAPI.getAll();
+      const response = await pickupsAPI.getMyPickups();
 
       if (response.data.success) {
         setPickups(response.data.data);
@@ -82,7 +82,7 @@ const Dashboard: React.FC = () => {
 
       console.log('Fetching user points with token:', token.substring(0, 20) + '...');
       
-      const response = await rewardsAPI.getAll();
+      const response = await rewardsAPI.getMyRewards();
 
       console.log('Points response:', response.data);
 
