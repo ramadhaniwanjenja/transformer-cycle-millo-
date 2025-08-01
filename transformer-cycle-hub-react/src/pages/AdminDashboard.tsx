@@ -24,6 +24,7 @@ interface Pickup {
 const AdminDashboard: React.FC = () => {
   const [pickups, setPickups] = useState<Pickup[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState({
     totalUsers: 0,
     pendingPickups: 0,
@@ -35,23 +36,39 @@ const AdminDashboard: React.FC = () => {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchPickups();
-    fetchStats();
+    console.log('AdminDashboard mounted');
+    try {
+      fetchPickups();
+      fetchStats();
+    } catch (error) {
+      console.error('Error in AdminDashboard useEffect:', error);
+      setError('Failed to load admin dashboard');
+    }
   }, []);
 
   const fetchPickups = async () => {
     try {
       const token = localStorage.getItem('accessToken');
-      if (!token) return;
+      if (!token) {
+        console.log('No access token found for pickups');
+        return;
+      }
+
+      console.log('Fetching admin pickups...');
 
       // Fetch all pickups, not just pending ones
       const response = await pickupsAPI.getAll();
+      console.log('Pickups response:', response.data);
 
       if (response.data.success) {
-        setPickups(response.data.data.pickups || response.data.data);
+        setPickups(response.data.data.pickups || response.data.data || []);
+      } else {
+        console.log('Pickups response not successful:', response.data);
+        setPickups([]);
       }
     } catch (error) {
       console.error('Error fetching pickups:', error);
+      setPickups([]);
     } finally {
       setLoading(false);
     }
@@ -60,27 +77,50 @@ const AdminDashboard: React.FC = () => {
   const fetchStats = async () => {
     try {
       const token = localStorage.getItem('accessToken');
-      if (!token) return;
+      if (!token) {
+        console.log('No access token found for stats');
+        return;
+      }
+
+      console.log('Fetching admin stats...');
 
       // Fetch pickup stats
       const pickupResponse = await pickupsAPI.getStats();
+      console.log('Pickup stats response:', pickupResponse.data);
 
       // Fetch user stats
       const userResponse = await usersAPI.getStats();
+      console.log('User stats response:', userResponse.data);
 
       if (pickupResponse.data.success && userResponse.data.success) {
         const pickupStats = pickupResponse.data.data;
         const userStats = userResponse.data.data;
         
         setStats({
-          totalUsers: userStats.totalUsers,
-          pendingPickups: pickupStats.byStatus.find((s: any) => s._id === 'pending')?.count || 0,
-          totalWeight: pickupStats.totalWeight,
+          totalUsers: userStats.totalUsers || 0,
+          pendingPickups: pickupStats.byStatus?.find((s: any) => s._id === 'pending')?.count || 0,
+          totalWeight: pickupStats.totalWeight || 0,
+          activeCenters: 25
+        });
+      } else {
+        console.log('Stats responses not successful:', { pickupResponse, userResponse });
+        // Set default stats if API calls fail
+        setStats({
+          totalUsers: 0,
+          pendingPickups: 0,
+          totalWeight: 0,
           activeCenters: 25
         });
       }
     } catch (error) {
       console.error('Error fetching stats:', error);
+      // Set default stats on error
+      setStats({
+        totalUsers: 0,
+        pendingPickups: 0,
+        totalWeight: 0,
+        activeCenters: 25
+      });
     }
   };
 
@@ -131,11 +171,37 @@ const AdminDashboard: React.FC = () => {
     return new Date(dateString).toLocaleDateString();
   };
 
+  if (error) {
+    return (
+      <div className="admin-dashboard">
+        <div className="admin-header card">
+          <h1>Admin Dashboard</h1>
+          <p style={{ color: 'red' }}>Error: {error}</p>
+          <button onClick={() => window.location.reload()}>Retry</button>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="admin-dashboard">
+        <div className="admin-header card">
+          <h1>Admin Dashboard</h1>
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  console.log('AdminDashboard rendering with:', { loading, error, stats, pickups: pickups.length });
+
   return (
     <div className="admin-dashboard">
       <div className="admin-header card">
         <h1>Admin Dashboard</h1>
         <p>Manage the Transformer Cycle Hub platform</p>
+        <p>Debug: {loading ? 'Loading' : 'Loaded'} | {error ? 'Error' : 'No Error'}</p>
       </div>
       
       <div className="admin-stats">

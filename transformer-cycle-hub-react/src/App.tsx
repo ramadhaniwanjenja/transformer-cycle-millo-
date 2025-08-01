@@ -40,12 +40,21 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
 // Admin Route Component
 const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  console.log('AdminRoute check:', {
+    isAuthenticated: isAuthenticated(),
+    isAdmin: isAdmin(),
+    userData: localStorage.getItem('userData')
+  });
+  
   if (!isAuthenticated()) {
+    console.log('Not authenticated, redirecting to login');
     return <Navigate to="/login" replace />;
   }
   if (!isAdmin()) {
+    console.log('Not admin, redirecting to dashboard');
     return <Navigate to="/dashboard" replace />;
   }
+  console.log('Admin access granted');
   return <>{children}</>;
 };
 
