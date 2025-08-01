@@ -40,6 +40,7 @@ app.use('/api/activities', activityRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
+  const mongoose = require('mongoose');
   res.json({ 
     status: 'OK', 
     message: 'Transformer Cycle Hub API is running',
@@ -48,7 +49,8 @@ app.get('/api/health', (req, res) => {
       nodeEnv: process.env.NODE_ENV,
       corsOrigin: process.env.CORS_ORIGIN,
       hasMongoUri: !!process.env.MONGODB_URI,
-      hasJwtSecret: !!process.env.JWT_SECRET
+      hasJwtSecret: !!process.env.JWT_SECRET,
+      dbConnected: mongoose.connection.readyState === 1
     }
   });
 });

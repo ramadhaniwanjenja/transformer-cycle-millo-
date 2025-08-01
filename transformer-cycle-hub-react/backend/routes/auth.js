@@ -50,6 +50,25 @@ router.post('/register', [
 
     const { firstName, lastName, email, phone, password } = req.body;
 
+    // Check if database is connected
+    const mongoose = require('mongoose');
+    if (mongoose.connection.readyState !== 1) {
+      console.log('Database not connected, attempting to connect...');
+      try {
+        await mongoose.connect(process.env.MONGODB_URI, {
+          useNewUrlParser: true,
+          useUnifiedTopology: true,
+        });
+      } catch (dbError) {
+        console.error('Database connection failed:', dbError);
+        return res.status(500).json({
+          success: false,
+          message: 'Database connection failed',
+          error: process.env.NODE_ENV === 'development' ? dbError.message : 'Internal server error'
+        });
+      }
+    }
+
     // Check if user already exists
     const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) {
@@ -127,6 +146,25 @@ router.post('/login', [
     }
 
     const { email, password } = req.body;
+
+    // Check if database is connected
+    const mongoose = require('mongoose');
+    if (mongoose.connection.readyState !== 1) {
+      console.log('Database not connected, attempting to connect...');
+      try {
+        await mongoose.connect(process.env.MONGODB_URI, {
+          useNewUrlParser: true,
+          useUnifiedTopology: true,
+        });
+      } catch (dbError) {
+        console.error('Database connection failed:', dbError);
+        return res.status(500).json({
+          success: false,
+          message: 'Database connection failed',
+          error: process.env.NODE_ENV === 'development' ? dbError.message : 'Internal server error'
+        });
+      }
+    }
 
     // Find user by email and include password for comparison
     const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
