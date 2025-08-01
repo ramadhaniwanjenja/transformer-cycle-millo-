@@ -63,6 +63,25 @@ app.post('/api/auth/test', (req, res) => {
   });
 });
 
+// Simple login test route (without database)
+app.post('/api/auth/login-test', (req, res) => {
+  res.json({ 
+    success: true, 
+    message: 'Login test route working',
+    data: {
+      user: {
+        _id: 'test-user-id',
+        firstName: 'Test',
+        lastName: 'User',
+        email: req.body.email,
+        role: 'user'
+      },
+      accessToken: 'test-token',
+      refreshToken: 'test-refresh-token'
+    }
+  });
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -81,24 +100,18 @@ app.use('*', (req, res) => {
   });
 });
 
-// Connect to database and start server
-const startServer = async () => {
-  try {
-    // Connect to MongoDB
-    await connectDB();
-    
-    // Start server
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-      console.log(`📡 API available at http://localhost:${PORT}/api`);
-      console.log(`🏥 Health check: http://localhost:${PORT}/api/health`);
-    });
-  } catch (error) {
-    console.error('Failed to start server:', error);
-    process.exit(1);
-  }
-};
+// Start server immediately
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📡 API available at http://localhost:${PORT}/api`);
+  console.log(`🏥 Health check: http://localhost:${PORT}/api/health`);
+});
 
-startServer();
+// Connect to database in background (don't block server startup)
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  connectDB().catch(error => {
+    console.error('Database connection failed:', error);
+  });
+}
 
 module.exports = app; 
