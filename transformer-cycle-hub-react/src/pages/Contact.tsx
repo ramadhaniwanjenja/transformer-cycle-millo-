@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
-import axios from 'axios';
+import { contactAPI } from '../services/api';
 import './Contact.css';
 
 const Contact: React.FC = () => {
@@ -31,7 +31,7 @@ const Contact: React.FC = () => {
     setErrorMessage('');
 
     try {
-      const response = await axios.post('/api/contact', formData);
+      const response = await contactAPI.sendMessage(formData);
 
       if (response.data.success) {
         setSuccessMessage(response.data.message);

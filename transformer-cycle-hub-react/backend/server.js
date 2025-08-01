@@ -22,7 +22,7 @@ const PORT = process.env.PORT || 3005;
 app.use(helmet());
 app.use(morgan('combined'));
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'https://transformer-cycle-millo-x4l9.vercel.app/',
+  origin: process.env.CORS_ORIGIN || 'https://transformer-cycle-millo-x4l9.vercel.app',
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));

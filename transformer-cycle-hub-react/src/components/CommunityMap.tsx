@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { recyclingCentersAPI } from '../services/api';
 import { FaMapMarkerAlt, FaPhone, FaGlobe, FaStar, FaFilter, FaSearch } from 'react-icons/fa';
 import './CommunityMap.css';
 
@@ -52,7 +52,7 @@ const CommunityMap: React.FC = () => {
         params.append('radius', '10000'); // 10km radius
       }
 
-      const response = await axios.get(`/api/recycling-centers?${params.toString()}`);
+      const response = await recyclingCentersAPI.getAll();
       if (response.data.success) {
         setCenters(response.data.data);
       }

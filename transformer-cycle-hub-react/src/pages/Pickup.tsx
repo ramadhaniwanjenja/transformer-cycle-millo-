@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaRecycle, FaCalendar, FaMapMarkerAlt } from 'react-icons/fa';
-import axios from 'axios';
+import { pickupsAPI } from '../services/api';
 import './Pickup.css';
 
 const Pickup: React.FC = () => {
@@ -36,12 +36,7 @@ const Pickup: React.FC = () => {
         return;
       }
 
-      const response = await axios.post('/api/pickups', formData, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await pickupsAPI.create(formData);
 
       if (response.data.success) {
         setSubmitMessage('Pickup scheduled successfully! You will receive a confirmation email shortly.');

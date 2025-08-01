@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaUser, FaLock, FaEnvelope, FaPhone, FaEye, FaEyeSlash } from 'react-icons/fa';
-import axios from 'axios';
+import { authAPI } from '../services/api';
 import './Auth.css';
 
 const SignUp: React.FC = () => {
@@ -52,7 +52,7 @@ const SignUp: React.FC = () => {
     });
     
     try {
-      const response = await axios.post('/api/auth/register', {
+      const response = await authAPI.register({
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,

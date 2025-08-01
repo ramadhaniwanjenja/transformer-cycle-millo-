@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FaUser, FaLock, FaEye, FaEyeSlash, FaLeaf } from 'react-icons/fa';
-import axios from 'axios';
+import { authAPI } from '../services/api';
 import './Auth.css';
 
 const Login: React.FC = () => {
@@ -40,7 +40,7 @@ const Login: React.FC = () => {
     setError('');
     
     try {
-      const response = await axios.post('/api/auth/login', {
+      const response = await authAPI.login({
         email: formData.email,
         password: formData.password
       });
