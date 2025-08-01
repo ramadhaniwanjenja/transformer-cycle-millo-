@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-require('dotenv').config();
+require('dotenv').config({ path: './config.env' });
 
 // Import models
 const Reward = require('./models/Reward');

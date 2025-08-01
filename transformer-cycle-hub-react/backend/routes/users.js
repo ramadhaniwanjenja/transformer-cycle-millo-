@@ -37,10 +37,33 @@ router.get('/', protect, admin, async (req, res) => {
 // @access  Private (admin only)
 router.get('/stats', protect, authorize('admin'), async (req, res) => {
   try {
+    console.log('Fetching user stats...');
+    
+    // Check if database is connected
+    const mongoose = require('mongoose');
+    if (mongoose.connection.readyState !== 1) {
+      console.log('Database not connected, attempting to connect...');
+      try {
+        await mongoose.connect(process.env.MONGODB_URI, {
+          useNewUrlParser: true,
+          useUnifiedTopology: true,
+        });
+      } catch (dbError) {
+        console.error('Database connection failed:', dbError);
+        return res.status(500).json({
+          success: false,
+          message: 'Database connection failed',
+          error: process.env.NODE_ENV === 'development' ? dbError.message : 'Internal server error'
+        });
+      }
+    }
+
     const totalUsers = await User.countDocuments();
     const activeUsers = await User.countDocuments({ isActive: true });
     const adminUsers = await User.countDocuments({ role: 'admin' });
     const regularUsers = await User.countDocuments({ role: 'user' });
+
+    console.log('User stats:', { totalUsers, activeUsers, adminUsers, regularUsers });
 
     res.json({
       success: true,
