@@ -5,7 +5,7 @@ import './AdminDashboard.css';
 
 interface Pickup {
   _id: string;
-  user: {
+  user?: {
     firstName: string;
     lastName: string;
     email: string;
@@ -257,12 +257,12 @@ const AdminDashboard: React.FC = () => {
             </div>
           ) : (
           <div className="pickup-list">
-              {pickups.map((pickup) => (
+              {pickups.filter(pickup => pickup.user).map((pickup) => (
                 <div key={pickup._id} className={`pickup-item ${pickup.status}`}>
                   <div className="pickup-header">
               <div className="pickup-info">
                       <h4>{pickup.wasteType.charAt(0).toUpperCase() + pickup.wasteType.slice(1)} Waste</h4>
-                      <p><strong>User:</strong> {pickup.user.firstName} {pickup.user.lastName}</p>
+                      <p><strong>User:</strong> {pickup.user ? `${pickup.user.firstName} ${pickup.user.lastName}` : 'Unknown User'}</p>
                       <p><strong>Quantity:</strong> {pickup.quantity}kg • <strong>Date:</strong> {formatDate(pickup.pickupDate)} • <strong>Time:</strong> {pickup.pickupTime}</p>
                       <p><strong>Address:</strong> {pickup.address}</p>
                       <p><strong>Status:</strong> <span className={`status-badge ${pickup.status}`}>{pickup.status.toUpperCase()}</span></p>
@@ -298,9 +298,9 @@ const AdminDashboard: React.FC = () => {
             <div className="modal-content">
               <h3>Pickup Details</h3>
               <div className="details-content">
-                <p><strong>User:</strong> {selectedPickup.user.firstName} {selectedPickup.user.lastName}</p>
-                <p><strong>Email:</strong> {selectedPickup.user.email}</p>
-                <p><strong>Phone:</strong> {selectedPickup.user.phone}</p>
+                <p><strong>User:</strong> {selectedPickup.user ? `${selectedPickup.user.firstName} ${selectedPickup.user.lastName}` : 'Unknown User'}</p>
+                <p><strong>Email:</strong> {selectedPickup.user ? selectedPickup.user.email : 'N/A'}</p>
+                <p><strong>Phone:</strong> {selectedPickup.user ? selectedPickup.user.phone : 'N/A'}</p>
                 <p><strong>Waste Type:</strong> {selectedPickup.wasteType}</p>
                 <p><strong>Quantity:</strong> {selectedPickup.quantity}kg</p>
                 <p><strong>Pickup Date:</strong> {formatDate(selectedPickup.pickupDate)}</p>

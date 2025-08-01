@@ -372,7 +372,29 @@ router.put('/:id/complete', protect, authorize('admin'), async (req, res) => {
 // @access  Private (admin only)
 router.get('/stats', protect, authorize('admin'), async (req, res) => {
   try {
+    console.log('Fetching pickup stats...');
+    
+    // Check if database is connected
+    const mongoose = require('mongoose');
+    if (mongoose.connection.readyState !== 1) {
+      console.log('Database not connected, attempting to connect...');
+      try {
+        await mongoose.connect(process.env.MONGODB_URI, {
+          useNewUrlParser: true,
+          useUnifiedTopology: true,
+        });
+      } catch (dbError) {
+        console.error('Database connection failed:', dbError);
+        return res.status(500).json({
+          success: false,
+          message: 'Database connection failed',
+          error: process.env.NODE_ENV === 'development' ? dbError.message : 'Internal server error'
+        });
+      }
+    }
+
     const stats = await Pickup.getStats();
+    console.log('Pickup stats:', stats);
 
     res.json({
       success: true,
