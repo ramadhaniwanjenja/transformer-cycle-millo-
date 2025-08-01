@@ -80,12 +80,24 @@ const Tutorials: React.FC = () => {
 
   const fetchUserProgress = async () => {
     try {
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        console.log('No access token found for tutorial progress');
+        setUserTutorials([]);
+        return;
+      }
+
       const response = await tutorialsAPI.getProgress();
       if (response.data.success) {
         setUserTutorials(response.data.data);
+      } else {
+        console.log('Tutorial progress response not successful:', response.data);
+        setUserTutorials([]);
       }
-    } catch (error) {
-      console.error('Error fetching user progress:', error);
+    } catch (error: any) {
+      console.error('Error fetching user progress:', error.response?.data || error.message);
+      // Don't crash the page, just show empty progress
+      setUserTutorials([]);
     }
   };
 
